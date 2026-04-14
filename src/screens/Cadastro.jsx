@@ -1,146 +1,137 @@
-import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { useState, useEffect } from "react";
+import { Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaskedTextInput } from "react-native-mask-text";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function App() {
+export default function CadastroScreen({ navigation }) {
 
-  const [nome, setNome] = useState('');
-  const [curso, setCurso] = useState('');
-  const [disciplina, setDisciplina] = useState('');
-  const [descricao, setDescricao] = useState('');
+  const [nome, setNome] = useState("");
+  const [curso, setCurso] = useState("");
+  const [disciplina, setDisciplina] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [cpf, setCpf] = useState("");
 
-  const [dados, setDados] = useState(null);
-
+ 
   useEffect(() => {
-    console.log("Aplicativo iniciado!");
+    async function carregarDados() {
+      const dados = await AsyncStorage.getItem("usuario");
+
+      if (dados) {
+        const usuario = JSON.parse(dados);
+
+        setNome(usuario.nome);
+        setCurso(usuario.curso);
+        setDisciplina(usuario.disciplina);
+        setDescricao(usuario.descricao);
+        setTelefone(usuario.telefone);
+        setCpf(usuario.cpf);
+      }
+    }
+
+    carregarDados();
   }, []);
 
-  const enviarFormulario = () => {
-    const novoCadastro = {
-      nome: nome,
-      curso: curso,
-      disciplina: disciplina,
-      descricao: descricao
+  async function salvarDados() {
+
+    if (
+      !nome ||
+      !curso ||
+      !disciplina ||
+      !descricao ||
+      !telefone ||
+      !cpf
+    ) {
+      Alert.alert("Erro", "Preencha todos os campos!");
+      return;
+    }
+
+    const usuario = {
+      nome,
+      curso,
+      disciplina,
+      descricao,
+      telefone,
+      cpf
     };
 
-    setDados(novoCadastro);
-  };
+    await AsyncStorage.setItem("usuario", JSON.stringify(usuario));
+
+    navigation.navigate("Perfil", { usuario });
+  }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.titulo}>Cadastre-se</Text>
-      <View style={styles.formulario}>
-        <Text style={styles.label}>Nome</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite o seu nome"
-          value={nome}
-          onChangeText={setNome}
-        />
-        <Text style={styles.label}>Curso</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite o seu curso"
-          value={curso}
-          onChangeText={setCurso}
-        />
-        <Text style={styles.label}>Disciplina</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite a sua disciplina"
-          value={disciplina}
-          onChangeText={setDisciplina}
-        />
-        <Text style={styles.label}>Descrição</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          placeholder="Descreva-se brevemente"
-          value={descricao}
-          onChangeText={setDescricao}
-          multiline={true}
-          numberOfLines={3}
-        />
-        <View style={styles.botao}>
-          <Button
-            title="Enviar Cadastro"
-            onPress={enviarFormulario}
-          />
-        </View>
-      </View>
 
-      {dados && (
-        <View style={styles.resultado}>
-          <Text style={styles.subtitulo}>Dados Cadastrados:</Text>
-          <Text style={styles.texto}>Nome: {dados.nome}</Text>
-          <Text style={styles.texto}>Curso: {dados.curso}</Text>
-          <Text style={styles.texto}>Disciplina: {dados.disciplina}</Text>
-          <Text style={styles.texto}>Descrição: {dados.descricao}</Text>
-        </View>
-      )}
+      <Text style={styles.titulo}>Formulário</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Nome"
+        value={nome}
+        onChangeText={setNome}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Curso"
+        value={curso}
+        onChangeText={setCurso}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Disciplina"
+        value={disciplina}
+        onChangeText={setDisciplina}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Descrição"
+        value={descricao}
+        onChangeText={setDescricao}
+      />
+
+      <MaskedTextInput
+        style={styles.input}
+        mask="(99) 99999-9999"
+        placeholder="Telefone"
+        value={telefone}
+        onChangeText={(text) => setTelefone(text)}
+      />
+
+      <MaskedTextInput
+        style={styles.input}
+        mask="999.999.999-99"
+        placeholder="CPF"
+        value={cpf}
+        onChangeText={(text) => setCpf(text)}
+      />
+
+      <Button title="Salvar" onPress={salvarDados} />
 
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff'
+    padding: 20
   },
 
   titulo: {
-    fontSize: 30,
-    fontWeight: 600,
-    marginBottom: 20,
-    textAlign: 'center'
-  },
-
-  formulario: {
-    marginBottom: 30
-  },
-
-  label: {
-    fontSize: 22,
-    marginTop: 10
+    fontSize: 24,
+    marginBottom: 20
   },
 
   input: {
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: "#ccc",
     padding: 10,
-    borderRadius: 5,
-    marginTop: 5
-  },
-
-  textArea: {
-    height: 80,
-    textAlignVertical: 'top'
-  },
-
-  botao: {
-    marginTop: 20
-  },
-
-  resultado: {
-    marginTop: 20,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: '#fff',
+    marginBottom: 10,
     borderRadius: 5
-  },
-
-  subtitulo: {
-    fontSize: 18,
-    fontWeight: 600,
-    marginBottom: 10
-  },
-
-  texto: {
-    fontSize: 18,
-    marginBottom: 5
   }
-
 });
