@@ -63,27 +63,7 @@ export default function CadastroScreen({ navigation }) {
 
     navigation.navigate("Perfil");
 
-  };
-
-  const limparDados = async () => {
-    await AsyncStorage.removeItem("usuario");
-
-    setNome("");
-    setCurso("");
-    setDisciplina("");
-    setDescricao("");
-    setTelefone("");
-    setCpf("");
-
-    Alert.alert("Sucesso", "Dados apagados!");
-  };
-
-  const confirmarLimpeza = () => {
-    Alert.alert("Confirmar", "Deseja apagar os dados?", [
-      { text: "Cancelar" },
-      { text: "Sim", onPress: limparDados }
-    ]);
-  };
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -140,11 +120,7 @@ export default function CadastroScreen({ navigation }) {
         onChangeText={(text) => setCpf(text)}
       />
 
-      <Button title="Salvar" onPress={salvarDados} />
-
-      <TouchableOpacity style={styles.botaoLimpar} onPress={confirmarLimpeza}>
-        <Text style={styles.textoBotao}>Limpar Dados</Text>
-      </TouchableOpacity>
+      <Button title="Salvar" onPress={salvarDados}/>
 
     </SafeAreaView>
   );
@@ -177,18 +153,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 5
-  },
-
-  botaoLimpar: {
-    marginTop: 15,
-    backgroundColor: "red",
-    padding: 12,
-    borderRadius: 5,
-    alignItems: "center"
-  },
-
-  textoBotao: {
-    color: "#fff",
-    fontWeight: "bold"
   }
+  
 });
