@@ -1,3 +1,4 @@
+import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, Image, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -8,29 +9,30 @@ export default function Perfil() {
   const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
-    async function carregar() {
+    async function carregarDados() {
       const dados = await AsyncStorage.getItem("usuario");
-      if (dados) setUsuario(JSON.parse(dados));
+
+      if (dados) {
+        setUsuario(JSON.parse(dados));
+      }
     }
 
-    carregar();
+    carregarDados();
   }, []);
 
-  if (!usuario) return <Text>Sem dados</Text>;
+  if (!usuario) {
+    return <Text>Nenhum dado encontrado</Text>;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
-
-      <Text style={styles.titulo}>Perfil</Text>
-
       <Image
-        source={require('./assets/icon.png')}
+        source={require('../img/fotoperfil.jpg')}
         style={styles.foto}
       />
 
-      <Text style={styles.texto}>Nome: {usuario.nome}</Text>
-      <Text style={styles.texto}>RM: 565956</Text>
-
+      <Text>Nome: Pedro Sakai</Text>
+      <Text>RM: 565956</Text>
     </SafeAreaView>
   );
 }
@@ -49,13 +51,13 @@ const styles = StyleSheet.create({
   },
 
   foto: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 170,
+    height: 170,
+    borderRadius: 70,
     marginBottom: 20
   },
 
   texto: {
-    fontSize: 18
+    fontSize: 25
   }
 });

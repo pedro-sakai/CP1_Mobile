@@ -1,5 +1,6 @@
+import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from "react";
-import { Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaskedTextInput } from "react-native-mask-text";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -58,59 +59,92 @@ export default function CadastroScreen({ navigation }) {
 
     await AsyncStorage.setItem("usuario", JSON.stringify(usuario));
 
-    navigation.navigate("Perfil", { usuario });
-  }
+    Alert.alert("Sucesso", "Dados salvos com sucesso!");
+
+    navigation.navigate("Perfil");
+
+  };
+
+  const limparDados = async () => {
+    await AsyncStorage.removeItem("usuario");
+
+    setNome("");
+    setCurso("");
+    setDisciplina("");
+    setDescricao("");
+    setTelefone("");
+    setCpf("");
+
+    Alert.alert("Sucesso", "Dados apagados!");
+  };
+
+  const confirmarLimpeza = () => {
+    Alert.alert("Confirmar", "Deseja apagar os dados?", [
+      { text: "Cancelar" },
+      { text: "Sim", onPress: limparDados }
+    ]);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
 
       <Text style={styles.titulo}>Formulário</Text>
 
+      <Text style={styles.label}>Nome</Text>
       <TextInput
         style={styles.input}
-        placeholder="Nome"
+        placeholder="Digite seu nome"
         value={nome}
         onChangeText={setNome}
       />
 
+      <Text style={styles.label}>Curso</Text>
       <TextInput
         style={styles.input}
-        placeholder="Curso"
+        placeholder="Digite seu curso"
         value={curso}
         onChangeText={setCurso}
       />
 
+      <Text style={styles.label}>Disciplina</Text>
       <TextInput
         style={styles.input}
-        placeholder="Disciplina"
+        placeholder="Digite a disciplina"
         value={disciplina}
         onChangeText={setDisciplina}
       />
 
+      <Text style={styles.label}>Descrição</Text>
       <TextInput
         style={styles.input}
-        placeholder="Descrição"
+        placeholder="Fale sobre você"
         value={descricao}
         onChangeText={setDescricao}
       />
 
+      <Text style={styles.label}>Telefone</Text>
       <MaskedTextInput
         style={styles.input}
         mask="(99) 99999-9999"
-        placeholder="Telefone"
+        placeholder="Digite seu telefone"
         value={telefone}
         onChangeText={(text) => setTelefone(text)}
       />
 
+      <Text style={styles.label}>CPF</Text>
       <MaskedTextInput
         style={styles.input}
         mask="999.999.999-99"
-        placeholder="CPF"
+        placeholder="Digite seu CPF"
         value={cpf}
         onChangeText={(text) => setCpf(text)}
       />
 
       <Button title="Salvar" onPress={salvarDados} />
+
+      <TouchableOpacity style={styles.botaoLimpar} onPress={confirmarLimpeza}>
+        <Text style={styles.textoBotao}>Limpar Dados</Text>
+      </TouchableOpacity>
 
     </SafeAreaView>
   );
@@ -118,13 +152,23 @@ export default function CadastroScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20
+  flex: 1,
+  paddingHorizontal: 20,
+  paddingTop: -30 
   },
 
   titulo: {
-    fontSize: 24,
-    marginBottom: 20
+  fontSize: 24,
+  fontWeight: "bold",
+  marginBottom: 10, 
+  marginTop: 0 
+  },
+
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginTop: 10,
+    marginBottom: 4
   },
 
   input: {
@@ -133,5 +177,18 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 5
+  },
+
+  botaoLimpar: {
+    marginTop: 15,
+    backgroundColor: "red",
+    padding: 12,
+    borderRadius: 5,
+    alignItems: "center"
+  },
+
+  textoBotao: {
+    color: "#fff",
+    fontWeight: "bold"
   }
 });

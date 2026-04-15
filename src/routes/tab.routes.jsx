@@ -1,7 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Cadastro from "./src/screens/Cadastro.jsx";
 import Perfil from "./src/screens/Perfil.jsx";
-import {Feather} from "@expo/vector-icons"
 
 const Tab = createBottomTabNavigator()
 
